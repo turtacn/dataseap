@@ -1,12 +1,12 @@
-# Dataseap - Unified Data Foundation Service for DIB
+# DataSeap - Unified Data Foundation Service for DIB
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/turtacn/Dataseap)](https://goreportcard.com/report/github.com/turtacn/Dataseap)
+[![Go Report Card](https://goreportcard.com/badge/github.com/turtacn/DataSeap)](https://goreportcard.com/report/github.com/turtacn/DataSeap)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Go Version](https://img.shields.io/badge/Go-1.20+-blue.svg)](https://golang.org/dl/)
-[![GitHub issues](https://img.shields.io/github/issues/turtacn/Dataseap)](https://github.com/turtacn/Dataseap/issues)
+[![GitHub issues](https://img.shields.io/github/issues/turtacn/DataSeap)](https://github.com/turtacn/DataSeap/issues)
 
 
-**Dataseap (Data Sea Platform)** 是一个旨在统一、高效、可扩展数据湖底座的开源项目。它基于业界领先的开源数据技术（如 StarRocks [1], Apache Pulsar等），封装和集成了对底层大数据集群的监控、告警、日志、事件、升级、扩缩容等维护能力，并提供标准化的数据上报、查询与分析接口。(Beyond the concept of data lake)
+**DataSeap (Data Sea Platform)** 是一个旨在统一、高效、可扩展数据湖底座的开源项目。它基于业界领先的开源数据技术（如 StarRocks [1], Apache Pulsar等），封装和集成了对底层大数据集群的监控、告警、日志、事件、升级、扩缩容等维护能力，并提供标准化的数据上报、查询与分析接口。(Beyond the concept of data lake)
 
 **核心目标**: 简化业务对底层数据湖构建和运维的复杂度。通过汇聚多源异构的数据，利用先进的分析引擎和AI能力，实现并保障数据资产的安全、合规流转与价值释放。
 
@@ -16,7 +16,7 @@
 
 需要处理海量的、多源异构的数据，并进行实时分析、深度挖掘和历史回溯。传统的数据架构往往难以应对这些挑战，导致查询性能瓶颈、运维复杂、成本高昂等问题。
 
-Dataseap 致力于：
+DataSeap 致力于：
 * **统一数据底座**: 为上层安全应用提供一个统一的数据存储、查询和分析入口。
 * **性能卓越**: 基于 StarRocks 的极速分析能力，满足实时查询和复杂分析的性能要求。
 * **弹性伸缩**: 架构设计支持水平扩展，从容应对数据量和业务增长。
@@ -43,7 +43,7 @@ Dataseap 致力于：
 
 ## 架构概览
 
-Dataseap 采用分层架构，主要包括展现与接入层、应用服务层、数据抽象与访问层、数据平台层以及运维管理平台。
+DataSeap 采用分层架构，主要包括展现与接入层、应用服务层、数据抽象与访问层、数据平台层以及运维管理平台。
 
 <img src="docs/imgs/overview-arch.png" width="100%"/>
 
@@ -75,16 +75,16 @@ Dataseap 采用分层架构，主要包括展现与接入层、应用服务层�
 1.  **克隆代码库**:
 
     ```bash
-    git clone [https://github.com/turtacn/Dataseap.git](https://github.com/turtacn/Dataseap.git)
-    cd Dataseap
+    git clone [https://github.com/turtacn/DataSeap.git](https://github.com/turtacn/DataSeap.git)
+    cd DataSeap
     ```
 
-2.  **构建 Dataseap 服务**:
+2.  **构建 DataSeap 服务**:
     (详细构建脚本待 `scripts/build.sh` 完成后提供)
 
     ```bash
     # 示例 (具体命令待定)
-    # go build -o build/Dataseap_server ./cmd/Dataseap-server
+    # go build -o build/DataSeap_server ./cmd/DataSeap-server
     ./scripts/build.sh
     ```
 
@@ -99,17 +99,17 @@ Dataseap 采用分层架构，主要包括展现与接入层、应用服务层�
 # docker-compose -f deployments/docker-compose/dev-env.yml up -d
 ```
 
-#### 2\. 运行 Dataseap 服务
+#### 2\. 运行 DataSeap 服务
 
 (详细运行脚本待 `scripts/run.sh` 完成后提供)
 
 ```bash
 # 示例 (具体命令待定)
-# ./build/Dataseap_server --config=./configs/config.yaml
+# ./build/DataSeap_server --config=./configs/config.yaml
 ./scripts/run.sh
 ```
 
-启动成功后，Dataseap 服务将在配置文件中指定的端口上监听请求 (例如 `http://localhost:8080`)。
+启动成功后，DataSeap 服务将在配置文件中指定的端口上监听请求 (例如 `http://localhost:8080`)。
 
 ## 开发
 
@@ -122,7 +122,7 @@ Dataseap 采用分层架构，主要包括展现与接入层、应用服务层�
   * `internal/app/`: 应用服务层，编排领域逻辑，实现具体用例。
   * `internal/infra/`: 基础设施层，封装外部依赖的具体实现，如数据库客户端、消息队列客户端等。
   * `internal/api/`: API 接口层，负责处理 HTTP 请求、参数校验、响应格式化等。
-  * `cmd/Dataseap-server/`: 应用主入口。
+  * `cmd/DataSeap-server/`: 应用主入口。
 
 ### 编码规范
 
@@ -153,7 +153,7 @@ Dataseap 采用分层架构，主要包括展现与接入层、应用服务层�
 
 ## 联系方式
 
-  * **GitHub Issues**: [https://www.google.com/url?sa=E\&source=gmail\&q=https://github.com/turtacn/Dataseap/issues](https://www.google.com/url?sa=E&source=gmail&q=https://github.com/turtacn/Dataseap/issues)
+  * **GitHub Issues**: [https://www.google.com/url?sa=E\&source=gmail\&q=https://github.com/turtacn/DataSeap/issues](https://www.google.com/url?sa=E&source=gmail&q=https://github.com/turtacn/DataSeap/issues)
   * (后续可添加其他联系方式，如邮件列表、社区论坛等)
 
 -----
