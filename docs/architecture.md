@@ -64,6 +64,10 @@ DataSeap 采用分层架构，确保各模块职责清晰、易于维护和扩�
   <img src="./imgs/datareport.svg" alt="Online SVG Image" width="100%">
 </a>
 
+
+<img src="https://raw.githubusercontent.com/turtacn/dataseap/master/docs/imgs/datareport.svg" alt="示例图" width="100%" />
+
+
 数据从各类设备或系统通过统一API网关进入数据上报服务。服务进行必要的格式校验和初步转换后，将数据作为消息发送到Pulsar集群。StarRocks通过其Routine Load或Stream Load机制（或通过Flink/Spark等中间层消费Pulsar再写入）持续地从Pulsar消费数据并加载到相应的表中。
 
 ### 4.2 查询与分析流程
