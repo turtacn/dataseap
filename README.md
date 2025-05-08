@@ -1,4 +1,4 @@
-# Dataseap - Unified Data Foundation Service for ISP
+# Dataseap - Unified Data Foundation Service for DIB
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/turtacn/Dataseap)](https://goreportcard.com/report/github.com/turtacn/Dataseap)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
