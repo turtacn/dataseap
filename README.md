@@ -45,7 +45,7 @@ Dataseap 致力于：
 
 Dataseap 采用分层架构，主要包括展现与接入层、应用服务层、数据抽象与访问层、数据平台层以及运维管理平台。
 
-<img src="docs/overview-arch.png" width="100%"/>
+<img src="docs/imgs/overview-arch.png" width="100%"/>
 
 更详细的架构设计请参见: **[https://www.google.com/search?q=./docs/architecture.md](https://www.google.com/search?q=./docs/architecture.md)**
 
