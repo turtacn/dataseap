@@ -164,5 +164,5 @@ DataSeap及其依赖组件推荐在容器化环境中部署（如Kubernetes）�
 
 ## 8. 参考资料
 
-[1] StarRocks Project. *The world's fastest open query engine for sub-second analytics both on and off the data lakehouse.* GitHub. [https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks)
-[2] Elastic. *Free and Open Source, Distributed, RESTful Search Engine.* GitHub. [https://github.com/elastic/elasticsearch](https://github.com/elastic/elasticsearch)
+- [1] StarRocks Project. *The world's fastest open query engine for sub-second analytics both on and off the data lakehouse.* GitHub. [https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks)
+- [2] Elastic. *Free and Open Source, Distributed, RESTful Search Engine.* GitHub. [https://github.com/elastic/elasticsearch](https://github.com/elastic/elasticsearch)
