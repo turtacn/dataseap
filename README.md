@@ -6,7 +6,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/turtacn/Dataseap)](https://github.com/turtacn/Dataseap/issues)
 
 
-**Dataseap (Data Security Platform)** 是一个旨在为智能化安全平台提供统一、高效、可扩展数据湖底座的开源项目。它基于业界领先的开源数据技术（如 StarRocks [1], Apache Pulsar等），封装和集成了对底层大数据集群的监控、告警、日志、事件、升级、扩缩容等维护能力，并提供标准化的数据上报、查询与分析接口。
+**Dataseap (Data Sea Platform)** 是一个旨在为智能化安全平台提供统一、高效、可扩展数据湖底座的开源项目。它基于业界领先的开源数据技术（如 StarRocks [1], Apache Pulsar等），封装和集成了对底层大数据集群的监控、告警、日志、事件、升级、扩缩容等维护能力，并提供标准化的数据上报、查询与分析接口。(Beyond the concept of data lake)
 
 **核心目标**: 简化业务对底层数据湖构建和运维的复杂度。通过汇聚多源异构的数据，利用先进的分析引擎和AI能力，实现并保障数据资产的安全、合规流转与价值释放。
 
