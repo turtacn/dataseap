@@ -21,7 +21,7 @@ DataSeap 的架构设计遵循以下核心原则：
 
 DataSeap 采用分层架构，确保各模块职责清晰、易于维护和扩展。核心架构如下图所示：
 
-<img src="imgs/architecture.svg" width="100%"/>
+![architecture](./imgs/architecture.svg）
 
 上图展示了DataSeap的宏观架构。它主要由以下几个层面构成：
 
