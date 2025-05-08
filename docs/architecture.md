@@ -21,7 +21,9 @@ DataSeap 的架构设计遵循以下核心原则：
 
 DataSeap 采用分层架构，确保各模块职责清晰、易于维护和扩展。核心架构如下图所示：
 
-![architecture](./imgs/architecture.svg）
+<a href="./imgs/architecture.svg"">
+  <img src="./imgs/architecture.svg" alt="Online SVG Image" width="100%">
+</a>
 
 上图展示了DataSeap的宏观架构。它主要由以下几个层面构成：
 
@@ -57,13 +59,19 @@ DataSeap 采用分层架构，确保各模块职责清晰、易于维护和扩�
 
 ### 4.1 数据上报流程
 
-<img src="imgs/datareport.svg" width="100%"/>
+
+<a href="./imgs/datareport.svg"">
+  <img src="./imgs/datareport.svg" alt="Online SVG Image" width="100%">
+</a>
 
 数据从各类设备或系统通过统一API网关进入数据上报服务。服务进行必要的格式校验和初步转换后，将数据作为消息发送到Pulsar集群。StarRocks通过其Routine Load或Stream Load机制（或通过Flink/Spark等中间层消费Pulsar再写入）持续地从Pulsar消费数据并加载到相应的表中。
 
 ### 4.2 查询与分析流程
 
-<img src="imgs/query.svg" width="100%"/>
+<a href="./imgs/query.svg"">
+  <img src="./imgs/query.svg" alt="Online SVG Image" width="100%">
+</a>
+
 
 查询和分析请求同样通过API网关，根据请求特征分发到统一查询服务或分析服务。
 
@@ -119,7 +127,11 @@ DataSeap 采用分层架构，确保各模块职责清晰、易于维护和扩�
 
 DataSeap及其依赖组件推荐在容器化环境中部署（如Kubernetes），以便于管理、伸缩和维护。
 
-<img src="imgs/deploy.svg" width="100%"/>
+<a href="./imgs/deploy.svg"">
+  <img src="./imgs/deploy.svg" alt="Online SVG Image" width="100%">
+</a>
+
+
 
 * **DataSeap 服务**: 无状态服务，可以部署多个Pod实例，通过Kubernetes Service实现负载均衡。
 * **StarRocks**:
