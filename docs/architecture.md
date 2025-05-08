@@ -124,7 +124,7 @@ DataSeap 采用分层架构，确保各模块职责清晰、易于维护和扩�
 
 DataSeap及其依赖组件推荐在容器化环境中部署（如Kubernetes），以便于管理、伸缩和维护。
 
-<img src="./imgs/deploy.svg" alt="Online SVG Image" width="100%">
+<img src="./imgs/deploy.png" alt="Online SVG Image" width="100%">
 
 
 
