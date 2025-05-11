@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+package turtacn.dataseap.api.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+
+option go_package = "github.com/turtacn/dataseap/api/v1;apiv1";
+
+// IngestionService 服务定义了数据上报相关的RPC接口
+// IngestionService defines RPC interfaces related to data ingestion.
+service IngestionService {
+  // IngestData 上报单条或批量数据
+  // IngestData ingests single or batch data records.
+  rpc IngestData(IngestDataRequest) returns (IngestDataResponse) {}
+
+  // IngestStreamData 通过流式方式上报数据 (可选，更复杂场景)
+  // IngestStreamData ingests data via streaming (optional, for more complex scenarios).
+  // rpc IngestStreamData(stream RawDataEvent) returns (IngestDataResponse) {}
+}
+
+// RawDataEvent 代表一条原始上报数据
+// RawDataEvent represents a single raw data event to be ingested.
+message RawDataEvent {
+  // data_source_id 数据来源标识，例如探针ID, 日志文件名等
+  // data_source_id Identifier for the data source, e.g., probe ID, log file name.
+  string data_source_id = 1;
+
+  // data_type 数据类型，用于指导解析和存储，例如 "firewall_log", "edr_event"
+  // data_type Type of data, used to guide parsing and storage, e.g., "firewall_log", "edr_event".
+  string data_type = 2;
+
+  // timestamp 事件发生的时间戳
+  // timestamp Timestamp of when the event occurred.
+  google.protobuf.Timestamp timestamp = 3;
+
+  // data 事件的具体内容，可以是结构化的JSON，或者其他格式的字符串/字节
+  // data The actual content of the event, can be structured JSON or other string/bytes format.
+  // 使用 google.protobuf.Struct 可以方便地表示任意JSON对象
+  // Using google.protobuf.Struct allows for easy representation of arbitrary JSON objects.
+  google.protobuf.Struct data = 4;
+
+  // raw_bytes 如果数据是非结构化的原始字节流
+  // raw_bytes If the data is an unstructured raw byte stream.
+  // oneof payload {
+  //   google.protobuf.Struct structured_data = 4;
+  //   bytes raw_bytes_payload = 5;
+  // }
+
+  // tags 附加的标签，用于分类或路由
+  // tags Additional tags for classification or routing.
+  map<string, string> tags = 6;
+}
+
+// IngestDataRequest 数据上报请求
+// IngestDataRequest for ingesting data.
+message IngestDataRequest {
+  // records 要上报的数据记录列表
+  // records List of data records to be ingested.
+  repeated RawDataEvent records = 1;
+
+  // request_id 请求的唯一标识，用于追踪
+  // request_id Unique identifier for the request, used for tracing.
+  string request_id = 2;
+}
+
+// IngestDataResponse 数据上报响应
+// IngestDataResponse for data ingestion.
+message IngestDataResponse {
+  // success 是否成功
+  // success Whether the operation was successful.
+  bool success = 1;
+
+  // ingested_count 成功上报的记录数量
+  // ingested_count Number of records successfully ingested.
+  int64 ingested_count = 2;
+
+  // failed_count 上报失败的记录数量
+  // failed_count Number of records that failed to ingest.
+  int64 failed_count = 3;
+
+  // error_message 如果发生错误，此字段包含错误信息
+  // error_message If an error occurred, this field contains the error message.
+  string error_message = 4;
+
+  // error_code 错误码
+  // error_code Error code if an error occurred.
+  string error_code = 5;
+
+  // failed_record_details (可选) 失败记录的详情
+  // failed_record_details (Optional) Details of failed records.
+  // repeated FailedRecordInfo failed_record_details = 6;
+}
+
+// FailedRecordInfo (可选) 记录失败的详细信息
+// FailedRecordInfo (Optional) records detailed information about a failed record.
+// message FailedRecordInfo {
+//   RawDataEvent original_record = 1; // 原始记录 Original record
+//   string error_reason = 2;         // 失败原因 Reason for failure
+// }

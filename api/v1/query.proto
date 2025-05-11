@@ -1,0 +1,176 @@
+syntax = "proto3";
+
+package turtacn.dataseap.api.v1;
+
+import "google/protobuf/struct.proto";
+import "api/v1/dataseap.proto"; // 导入共享类型 For shared types
+
+option go_package = "github.com/turtacn/dataseap/api/v1;apiv1";
+
+// QueryService 服务定义了数据查询和分析相关的RPC接口
+// QueryService defines RPC interfaces related to data querying and analysis.
+service QueryService {
+  // ExecuteSQLQuery 执行一个SQL查询 (主要用于StarRocks)
+  // ExecuteSQLQuery executes an SQL query (primarily for StarRocks).
+  rpc ExecuteSQLQuery(ExecuteSQLQueryRequest) returns (ExecuteSQLQueryResponse) {}
+
+  // FullTextSearch 执行跨表或单表的全文检索
+  // FullTextSearch performs cross-table or single-table full-text search.
+  rpc FullTextSearch(FullTextSearchRequest) returns (FullTextSearchResponse) {}
+
+  // Get 物化视图列表 (如果需要API管理)
+  // GetMaterializedViewsList (if API management is needed)
+  // rpc GetMaterializedViews(GetMaterializedViewsRequest) returns (GetMaterializedViewsResponse) {}
+}
+
+// ExecuteSQLQueryRequest SQL查询请求
+// ExecuteSQLQueryRequest for executing an SQL query.
+message ExecuteSQLQueryRequest {
+  // sql_query 要执行的SQL语句
+  // sql_query The SQL statement to execute.
+  string sql_query = 1;
+
+  // parameters (可选) SQL查询的参数，用于防止SQL注入
+  // parameters (Optional) Parameters for the SQL query, used to prevent SQL injection.
+  map<string, google.protobuf.Value> parameters = 2;
+
+  // pagination (可选) 分页参数
+  // pagination (Optional) Pagination parameters.
+  PaginationRequest pagination = 3;
+
+  // request_id 请求的唯一标识
+  // request_id Unique identifier for the request.
+  string request_id = 4;
+
+  // workload_group (可选) 指定查询使用的工作负载组
+  // workload_group (Optional) Specifies the workload group to be used for the query.
+  string workload_group = 5;
+
+  // query_timeout_seconds (可选) 查询超时时间（秒）
+  // query_timeout_seconds (Optional) Query timeout in seconds.
+  int32 query_timeout_seconds = 6;
+}
+
+// DataRow 代表查询结果中的一行数据
+// DataRow represents a single row of data in a query result.
+// 使用 google.protobuf.Struct 可以灵活表示任意结构的行数据
+// Using google.protobuf.Struct allows flexible representation of arbitrarily structured row data.
+message DataRow {
+  google.protobuf.Struct fields = 1;
+}
+
+// ExecuteSQLQueryResponse SQL查询响应
+// ExecuteSQLQueryResponse for an SQL query.
+message ExecuteSQLQueryResponse {
+  // success 是否成功
+  // success Whether the operation was successful.
+  bool success = 1;
+
+  // message 提示信息
+  // message Informational message.
+  string message = 2;
+
+  // column_names (可选) 列名列表，如果结果集包含数据
+  // column_names (Optional) List of column names if the result set contains data.
+  repeated string column_names = 3;
+
+  // rows 查询结果的数据行
+  // rows Data rows of the query result.
+  repeated DataRow rows = 4;
+
+  // pagination (可选) 分页信息，如果请求中包含了分页
+  // pagination (Optional) Pagination information if pagination was included in the request.
+  PaginationResponse pagination = 5;
+
+  // affected_rows 对于DML语句，表示影响的行数
+  // affected_rows For DML statements, represents the number of affected rows.
+  int64 affected_rows = 6;
+
+  // error (可选) 错误详情
+  // error (Optional) Error details.
+  ErrorDetail error = 7;
+}
+
+// FullTextSearchRequest 全文检索请求
+// FullTextSearchRequest for full-text search.
+message FullTextSearchRequest {
+  // keywords 检索的关键字，可以是空格分隔的多个词
+  // keywords Keywords for the search, can be multiple space-separated words.
+  string keywords = 1;
+
+  // target_tables (可选) 指定要搜索的表名列表。如果为空，则可能搜索所有已配置全文检索的表
+  // target_tables (Optional) List of table names to search. If empty, may search all tables configured for full-text search.
+  repeated string target_tables = 2;
+
+  // target_fields (可选) 指定在表内要搜索的字段列表。如果为空，则搜索表内所有已配置索引的文本字段
+  // target_fields (Optional) List of fields to search within tables. If empty, searches all indexed text fields in the table.
+  repeated string target_fields = 3;
+
+  // tokenizer (可选) 指定分词器，如 "standard", "english", "chinese"
+  // tokenizer (Optional) Specify the tokenizer, e.g., "standard", "english", "chinese".
+  string tokenizer = 4;
+
+  // recall_priority 召回优先模式，对应 StarRocks 的 MATCH_ANY (true) 或 MATCH_ALL (false)
+  // recall_priority Recall priority mode, corresponds to StarRocks' MATCH_ANY (true) or MATCH_ALL (false).
+  bool recall_priority = 5; // Default to true (MATCH_ANY)
+
+  // pagination 分页参数
+  // pagination Pagination parameters.
+  PaginationRequest pagination = 6;
+
+  // request_id 请求的唯一标识
+  // request_id Unique identifier for the request.
+  string request_id = 7;
+
+  // time_range_filter (可选) 时间范围过滤
+  // time_range_filter (Optional) Time range filter.
+  TimeRange time_range_filter = 8;
+}
+
+// SearchHit 代表全文检索的一条命中结果
+// SearchHit represents a single hit from a full-text search.
+message SearchHit {
+  // source_table 命中的数据所在的表名
+  // source_table Name of the table where the hit occurred.
+  string source_table = 1;
+
+  // hit_fields 命中关键字的具体字段和片段 (可以进一步细化)
+  // hit_fields Specific fields and snippets where keywords were hit (can be further refined).
+  map<string, string> hit_fields = 2; // e.g., {"message": "snippet with keyword..."}
+
+  // score (可选) 结果的相关性得分
+  // score (Optional) Relevance score of the hit.
+  float score = 3;
+
+  // document 完整的文档/行数据
+  // document The full document/row data.
+  DataRow document = 4;
+
+  // id (可选) 文档的唯一ID
+  // id (Optional) Unique ID of the document.
+  string id = 5;
+}
+
+// FullTextSearchResponse 全文检索响应
+// FullTextSearchResponse for full-text search.
+message FullTextSearchResponse {
+  // success 是否成功
+  // success Whether the operation was successful.
+  bool success = 1;
+
+  // message 提示信息
+  // message Informational message.
+  string message = 2;
+
+  // hits 检索到的命中结果列表
+  // hits List of search hits found.
+  repeated SearchHit hits = 3;
+
+  // pagination 分页信息
+  // pagination Pagination information.
+  PaginationResponse pagination = 4;
+
+  // error (可选) 错误详情
+  // error (Optional) Error details.
+  ErrorDetail error = 5;
+}

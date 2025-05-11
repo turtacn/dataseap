@@ -1,0 +1,304 @@
+syntax = "proto3";
+
+package turtacn.dataseap.api.v1;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/struct.proto";
+import "api/v1/dataseap.proto"; // 导入共享类型 For shared types
+
+option go_package = "github.com/turtacn/dataseap/api/v1;apiv1";
+
+// ManagementService 服务定义了平台管理相关的RPC接口
+// ManagementService defines RPC interfaces related to platform management.
+service ManagementService {
+  // --- Workload Management ---
+  // CreateWorkloadGroup 创建一个新的工作负载组 (StarRocks)
+  // CreateWorkloadGroup creates a new workload group (StarRocks).
+  rpc CreateWorkloadGroup(CreateWorkloadGroupRequest) returns (WorkloadGroupResponse) {}
+
+  // GetWorkloadGroup 获取指定工作负载组的信息
+  // GetWorkloadGroup retrieves information for a specific workload group.
+  rpc GetWorkloadGroup(GetWorkloadGroupRequest) returns (WorkloadGroupResponse) {}
+
+  // ListWorkloadGroups 列出所有工作负载组
+  // ListWorkloadGroups lists all workload groups.
+  rpc ListWorkloadGroups(ListWorkloadGroupsRequest) returns (ListWorkloadGroupsResponse) {}
+
+  // UpdateWorkloadGroup 更新一个已存在的工作负载组
+  // UpdateWorkloadGroup updates an existing workload group.
+  rpc UpdateWorkloadGroup(UpdateWorkloadGroupRequest) returns (WorkloadGroupResponse) {}
+
+  // DeleteWorkloadGroup 删除一个工作负载组
+  // DeleteWorkloadGroup deletes a workload group.
+  rpc DeleteWorkloadGroup(DeleteWorkloadGroupRequest) returns (google.protobuf.Empty) {}
+
+
+  // --- Metadata Management ---
+  // GetTableSchema 获取指定表的Schema信息
+  // GetTableSchema retrieves the schema information for a specific table.
+  rpc GetTableSchema(GetTableSchemaRequest) returns (GetTableSchemaResponse) {}
+
+  // ListTables 列出指定数据库中的所有表 (或符合条件的表)
+  // ListTables lists all tables in a specified database (or matching criteria).
+  rpc ListTables(ListTablesRequest) returns (ListTablesResponse) {}
+
+  // CreateTable (可选) 通过API创建表，简化DDL操作
+  // CreateTable (Optional) Create table via API to simplify DDL operations.
+  // rpc CreateTable(CreateTableRequest) returns (StandardResponse);
+
+  // CreateIndex 为表的字段创建索引 (例如倒排索引、Bitmap索引)
+  // CreateIndex creates an index on a table's field (e.g., inverted index, bitmap index).
+  rpc CreateIndex(CreateIndexRequest) returns (StandardResponse) {}
+
+  // GetIndexInfo 获取表的索引信息
+  // GetIndexInfo retrieves index information for a table.
+  rpc GetIndexInfo(GetIndexInfoRequest) returns (GetIndexInfoResponse) {}
+
+  // CreateMaterializedView 创建物化视图
+  // CreateMaterializedView creates a materialized view.
+  rpc CreateMaterializedView(CreateMaterializedViewRequest) returns (StandardResponse) {}
+
+
+  // --- Lifecycle & Monitoring (Basic examples) ---
+  // GetComponentStatus 获取组件状态 (例如StarRocks FE/BE, Pulsar Broker)
+  // GetComponentStatus retrieves the status of a component (e.g., StarRocks FE/BE, Pulsar Broker).
+  rpc GetComponentStatus(GetComponentStatusRequest) returns (GetComponentStatusResponse) {}
+
+  // TriggerDataCompaction (示例) 触发数据合并/优化任务
+  // TriggerDataCompaction (Example) triggers a data compaction/optimization task.
+  // rpc TriggerDataCompaction(TriggerDataCompactionRequest) returns (StandardResponse) {}
+}
+
+
+// --- Workload Group Messages ---
+message WorkloadGroup {
+  // name 工作负载组名称
+  // name Name of the workload group.
+  string name = 1;
+
+  // cpu_share CPU资源权重
+  // cpu_share CPU resource weight.
+  int32 cpu_share = 2;
+
+  // memory_limit 内存限制 (例如 "10G", "20%")
+  // memory_limit Memory limit (e.g., "10G", "20%").
+  string memory_limit = 3;
+
+  // concurrency_limit (可选) 最大并发查询数
+  // concurrency_limit (Optional) Maximum number of concurrent queries.
+  int32 concurrency_limit = 4;
+
+  // max_queue_size (可选) 最大排队任务数
+  // max_queue_size (Optional) Maximum number of queued tasks.
+  int32 max_queue_size = 5;
+
+  // properties (可选) 其他属性，例如 'skip_mem_check', 'spill_mem_limit_threshold'
+  // properties (Optional) Other properties, e.g., 'skip_mem_check', 'spill_mem_limit_threshold'.
+  map<string, string> properties = 6;
+}
+
+message CreateWorkloadGroupRequest {
+  WorkloadGroup workload_group = 1;
+}
+
+message GetWorkloadGroupRequest {
+  string name = 1; // 工作负载组名称 Name of the workload group.
+}
+
+message UpdateWorkloadGroupRequest {
+  WorkloadGroup workload_group = 1;
+}
+
+message DeleteWorkloadGroupRequest {
+  string name = 1; // 工作负载组名称 Name of the workload group.
+}
+
+message WorkloadGroupResponse {
+  WorkloadGroup workload_group = 1;
+  ErrorDetail error = 2; // 错误信息 Error information
+}
+
+message ListWorkloadGroupsRequest {
+  PaginationRequest pagination = 1;
+}
+
+message ListWorkloadGroupsResponse {
+  repeated WorkloadGroup workload_groups = 1;
+  PaginationResponse pagination = 2;
+  ErrorDetail error = 3;
+}
+
+// --- Metadata Messages ---
+message FieldSchema {
+  // name 字段名称
+  // name Field name.
+  string name = 1;
+
+  // type 字段数据类型 (例如 "INT", "VARCHAR(255)", "DATETIME")
+  // type Field data type (e.g., "INT", "VARCHAR(255)", "DATETIME").
+  DataType data_type = 2; // Using shared DataType enum
+
+  // type_string 原始类型字符串 (例如 VARCHAR(255))
+  // type_string Original type string (e.g. VARCHAR(255))
+  string type_string = 3;
+
+  // is_nullable 是否允许为空
+  // is_nullable Whether the field can be null.
+  bool is_nullable = 4;
+
+  // is_primary_key 是否为主键
+  // is_primary_key Whether the field is part of the primary key.
+  bool is_primary_key = 5;
+
+  // default_value (可选) 默认值
+  // default_value (Optional) Default value.
+  string default_value = 6;
+
+  // comment (可选) 字段注释
+  // comment (Optional) Field comment.
+  string comment = 7;
+
+  // aggregation_type (可选) 聚合类型 (例如 SUM, REPLACE, NONE) - StarRocks特定
+  // aggregation_type (Optional) Aggregation type (e.g. SUM, REPLACE, NONE) - StarRocks specific
+  string aggregation_type = 8;
+}
+
+message TableSchema {
+  // table_name 表名
+  // table_name Table name.
+  string table_name = 1;
+
+  // database_name 数据库名
+  // database_name Database name.
+  string database_name = 2;
+
+  // fields 表的字段列表
+  // fields List of fields in the table.
+  repeated FieldSchema fields = 3;
+
+  // table_type 表类型 (例如 OLAP, MYSQL, HIVE) - StarRocks特定
+  // table_type Table type (e.g. OLAP, MYSQL, HIVE) - StarRocks specific
+  string table_type = 4;
+
+  // keys_type (可选) 键类型 (例如 DUPLICATE KEY, AGGREGATE KEY, UNIQUE KEY, PRIMARY KEY) - StarRocks特定
+  // keys_type (Optional) Key type (e.g. DUPLICATE KEY, AGGREGATE KEY, UNIQUE KEY, PRIMARY KEY) - StarRocks specific
+  string keys_type = 5;
+
+  // partition_info (可选) 分区信息
+  // partition_info (Optional) Partition information.
+  string partition_info = 6; // Could be a structured message too
+
+  // distribution_info (可选) 分桶信息
+  // distribution_info (Optional) Distribution (bucketing) information.
+  string distribution_info = 7; // Could be a structured message too
+
+  // properties (可选) 其他属性
+  // properties (Optional) Other properties.
+  map<string, string> properties = 8;
+}
+
+message GetTableSchemaRequest {
+  string database_name = 1; // 数据库名 Database name
+  string table_name = 2;    // 表名 Table name
+}
+
+message GetTableSchemaResponse {
+  TableSchema schema = 1;
+  ErrorDetail error = 2;
+}
+
+message ListTablesRequest {
+  string database_name = 1; // 数据库名 Database name
+  PaginationRequest pagination = 2;
+  // string pattern = 3; // (可选) 表名匹配模式 (Optional) Table name matching pattern
+}
+
+message ListTablesResponse {
+  repeated string table_names = 1; // 表名列表 List of table names
+  PaginationResponse pagination = 2;
+  ErrorDetail error = 3;
+}
+
+message IndexDefinition {
+  // index_name 索引名称
+  // index_name Index name.
+  string index_name = 1;
+
+  // index_type 索引类型 (例如 "BITMAP", "INVERTED")
+  // index_type Index type (e.g., "BITMAP", "INVERTED").
+  string index_type = 2; // Could use an enum from dataseap.proto if defined
+
+  // fields 索引包含的字段列表
+  // fields List of fields included in the index.
+  repeated string fields = 3;
+
+  // properties (可选) 索引属性 (例如 分词器 'parser'='chinese' for inverted index)
+  // properties (Optional) Index properties (e.g., tokenizer 'parser'='chinese' for inverted index).
+  map<string, string> properties = 4;
+
+  // comment (可选) 索引注释
+  // comment (Optional) Index comment.
+  string comment = 5;
+}
+
+message CreateIndexRequest {
+  string database_name = 1;
+  string table_name = 2;
+  IndexDefinition index_definition = 3;
+}
+
+message GetIndexInfoRequest {
+  string database_name = 1;
+  string table_name = 2;
+}
+
+message GetIndexInfoResponse {
+  repeated IndexDefinition indexes = 1;
+  ErrorDetail error = 2;
+}
+
+message CreateMaterializedViewRequest {
+  string database_name = 1;
+  string view_name = 2;
+  string query = 3; // 定义物化视图的SQL查询 The SQL query defining the materialized view.
+  // refresh_type (可选) 刷新类型 (例如 ASYNC, SYNC)
+  // refresh_type (Optional) Refresh type (e.g., ASYNC, SYNC).
+  string refresh_type = 4;
+  // properties (可选) 其他属性
+  // properties (Optional) Other properties.
+  map<string, string> properties = 5;
+}
+
+
+// --- Lifecycle & Monitoring Messages ---
+message ComponentStatus {
+  // component_name 组件名称 (例如 "StarRocksFE-1", "StarRocksBE-worker1", "PulsarBroker-A")
+  // component_name Name of the component.
+  string component_name = 1;
+
+  // status 状态 (例如 "HEALTHY", "UNHEALTHY", "DEGRADED", "UNKNOWN")
+  // status Status (e.g., "HEALTHY", "UNHEALTHY", "DEGRADED", "UNKNOWN").
+  string status = 2; // Could be an enum
+
+  // message (可选) 附加的状态信息
+  // message (Optional) Additional status message.
+  string message = 3;
+
+  // details (可选) 更详细的状态信息，可以是JSON结构
+  // details (Optional) More detailed status information, can be a JSON structure.
+  google.protobuf.Struct details = 4;
+}
+
+message GetComponentStatusRequest {
+  // component_name (可选) 指定要查询的组件名，如果为空则返回所有受管组件状态
+  // component_name (Optional) Specify the component name to query, if empty returns status for all managed components.
+  string component_name = 1;
+  // component_type (可选) 组件类型 (例如 "StarRocksFE", "StarRocksBE", "PulsarBroker")
+  // component_type (Optional) Component type (e.g., "StarRocksFE", "StarRocksBE", "PulsarBroker").
+  string component_type = 2;
+}
+
+message GetComponentStatusResponse {
+  repeated ComponentStatus statuses = 1;
+  ErrorDetail error = 2;
+}

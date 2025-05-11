@@ -1,0 +1,155 @@
+syntax = "proto3";
+
+package turtacn.dataseap.api.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/turtacn/dataseap/api/v1;apiv1";
+
+// PaginationRequest 分页请求参数
+// PaginationRequest parameters for pagination.
+message PaginationRequest {
+  // page 页码, 从1开始
+  // page Page number, starting from 1.
+  int32 page = 1;
+
+  // page_size 每页大小
+  // page_size Number of items per page.
+  int32 page_size = 2;
+}
+
+// PaginationResponse 分页响应参数
+// PaginationResponse parameters for pagination.
+message PaginationResponse {
+  // page 当前页码
+  // page Current page number.
+  int32 page = 1;
+
+  // page_size 每页大小
+  // page_size Number of items per page.
+  int32 page_size = 2;
+
+  // total_items 总记录数
+  // total_items Total number of items.
+  int64 total_items = 3;
+
+  // total_pages 总页数
+  // total_pages Total number of pages.
+  int32 total_pages = 4;
+}
+
+// ErrorDetail API错误响应中的错误详情
+// ErrorDetail provides detailed error information in API responses.
+message ErrorDetail {
+  // code 错误码字符串
+  // code Error code string.
+  string code = 1;
+
+  // message 错误信息
+  // message Error message.
+  string message = 2;
+
+  // details (可选) 更详细的错误信息或验证错误 (例如 map<string, string> for validation errors)
+  // details (Optional) More detailed error information or validation errors.
+  // For simplicity, using string here, can be google.protobuf.Struct for complex details.
+  string details = 3;
+}
+
+// StandardResponse 通用操作响应，常用于Create/Update/Delete等操作
+// StandardResponse is a common response for operations like Create/Update/Delete.
+message StandardResponse {
+  // success 操作是否成功
+  // success Indicates if the operation was successful.
+  bool success = 1;
+
+  // message 提示信息
+  // message Informational message.
+  string message = 2;
+
+  // id (可选) 相关资源ID，例如创建成功后的资源ID
+  // id (Optional) ID of the relevant resource, e.g., ID of the resource after successful creation.
+  string id = 3;
+
+  // error (可选) 错误详情
+  // error (Optional) Error details.
+  ErrorDetail error = 4;
+}
+
+// SortOrder 排序顺序枚举
+// SortOrder enum for sorting order.
+enum SortOrder {
+  SORT_ORDER_UNSPECIFIED = 0; // 未指定 Unspecified
+  ASC = 1;  // 升序 Ascending
+  DESC = 2; // 降序 Descending
+}
+
+// SortDirective 排序指令
+// SortDirective for specifying sort order on a field.
+message SortDirective {
+  // field_name 要排序的字段名
+  // field_name Name of the field to sort by.
+  string field_name = 1;
+
+  // order 排序顺序
+  // order Sort order.
+  SortOrder order = 2;
+}
+
+// TimeRange 时间范围定义
+// TimeRange defines a time range.
+message TimeRange {
+  // start_time 开始时间 (包含)
+  // start_time Start time (inclusive).
+  google.protobuf.Timestamp start_time = 1;
+
+  // end_time 结束时间 (不包含或包含，取决于具体实现约定)
+  // end_time End time (exclusive or inclusive, depending on implementation convention).
+  google.protobuf.Timestamp end_time = 2;
+}
+
+// DataType 数据类型枚举 (用于元数据管理等)
+// DataType enum for data types (used in metadata management, etc.).
+enum DataType {
+  DATA_TYPE_UNSPECIFIED = 0; // 未指定 Unspecified
+  BOOLEAN = 1;   // 布尔类型 Boolean type
+  TINYINT = 2;   // TinyInt 类型 TinyInt type
+  SMALLINT = 3;  // SmallInt 类型 SmallInt type
+  INT = 4;       // Int 类型 Int type
+  BIGINT = 5;    // BigInt 类型 BigInt type
+  LARGEINT = 6;  // LargeInt 类型 LargeInt type
+  FLOAT = 7;     // Float 类型 Float type
+  DOUBLE = 8;    // Double 类型 Double type
+  DECIMAL = 9;   // Decimal 类型 Decimal type
+  DATE = 10;      // Date 类型 Date type
+  DATETIME = 11;  // DateTime 类型 DateTime type
+  CHAR = 12;      // Char 类型 Char type
+  VARCHAR = 13;   // Varchar 类型 Varchar type
+  STRING = 14;    // String 类型 String type (often used interchangeably with VARCHAR in some contexts)
+  JSON = 15;      // JSON类型 JSON type
+  ARRAY = 16;     // 数组类型 Array type (may need further specification of element type)
+  MAP = 17;       // Map类型 Map type (may need further specification of key/value types)
+  STRUCT = 18;    // 结构体类型 Struct type (may need further specification of field types)
+  BINARY = 19;    // 二进制类型 Binary / Bytes type
+}
+
+// KeyValuePair 通用键值对结构
+// KeyValuePair generic key-value pair structure.
+message KeyValuePair {
+    string key = 1;
+    string value = 2; // For simplicity, value is string. Can use google.protobuf.Value for varied types.
+}
+
+// DataSeaPService (可选) 如果需要一个聚合所有子服务的顶级服务，可以在此定义
+// DataSeaPService (Optional) If a top-level service aggregating all sub-services is needed, it can be defined here.
+// 通常，每个 .proto 文件定义自己的服务更符合微服务和模块化原则。
+// Typically, each .proto file defining its own service aligns better with microservices and modularity principles.
+// service DataSeaPService {
+//   // RPCs here could delegate to IngestionService, QueryService, ManagementService
+//   // Example:
+//   // rpc Ingest(IngestDataRequest) returns (IngestDataResponse) {
+//   //   option (google.api.http) = {
+//   //     post: "/v1/ingest"
+//   //     body: "*"
+//   //   };
+//   // }
+// }

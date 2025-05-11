@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataseap-server
+  namespace: dataseap # Optional: specify a namespace
+  labels:
+    app: dataseap-server
+    component: api-server
+    tier: backend
+spec:
+  replicas: 1 # Start with 1, adjust based on load and HPA
+  selector:
+    matchLabels:
+      app: dataseap-server
+  template:
+    metadata:
+      labels:
+        app: dataseap-server
+        component: api-server # For service selector
+    spec:
+      containers:
+        - name: dataseap-server
+          image: turtacn/dataseap:latest # Replace with your actual image registry and tag
+          imagePullPolicy: IfNotPresent # Or Always for development with :latest tag
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: grpc
+              containerPort: 50051
+              protocol: TCP
+          # Environment variables (examples)
+          # env:
+          #   - name: DATASEAP_CONFIG_PATH
+          #     value: "/app/config/config.yaml" # If config is baked into image or via ConfigMap
+          #   - name: DATASEAP_SERVER_MODE
+          #     value: "release"
+          #   - name: STARROCKS_FE_HOSTS # Example of overriding config via env
+          #     value: "starrocks-fe-service.starrocks-namespace.svc.cluster.local:8030"
+
+          # Liveness and Readiness Probes
+          livenessProbe:
+            httpGet:
+              path: /health # Assuming /health endpoint is on HTTP port
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          # Resource requests and limits (important for production)
+          # resources:
+          #   requests:
+          #     cpu: "250m"
+          #     memory: "256Mi"
+          #   limits:
+          #     cpu: "1000m"
+          #     memory: "1Gi"
+
+          # Volume mounts (e.g., for configuration from a ConfigMap)
+          # volumeMounts:
+          #   - name: config-volume
+          #     mountPath: /app/config # Mounts the ConfigMap into /app/config directory
+
+      # Volumes (e.g., to define a ConfigMap volume)
+      # volumes:
+      #   - name: config-volume
+      #     configMap:
+      #       name: dataseap-config # Name of your ConfigMap resource
+
+      # Service account (if your app needs specific K8s permissions)
+      # serviceAccountName: dataseap-service-account
+
+      # Image pull secrets (if using a private registry)
+      # imagePullSecrets:
+      #   - name: my-registry-secret
