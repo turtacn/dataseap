@@ -115,14 +115,26 @@ DataSeap 采用分层架构，主要包括展现与接入层、应用服务层�
 
 ### 代码结构
 
-项目代码主要位于 `internal/` 目录下，遵循典型的分层架构：
+项目代码 `(Brief)` 目录下，遵循典型的分层架构：
 
-  * `internal/pkg/`: 存放项目内部共享的基础包，如日志、错误处理、通用类型定义等。
-  * `internal/domain/`: 领域层，包含核心业务模型和仓储接口。
-  * `internal/app/`: 应用服务层，编排领域逻辑，实现具体用例。
-  * `internal/infra/`: 基础设施层，封装外部依赖的具体实现，如数据库客户端、消息队列客户端等。
-  * `internal/api/`: API 接口层，负责处理 HTTP 请求、参数校验、响应格式化等。
-  * `cmd/DataSeap-server/`: 应用主入口。
+```text
+dataseap/
+├── api/               # API definitions (gRPC protos, OpenAPI specs)
+├── cmd/               # Main application(s)
+├── deployments/       # Dockerfiles, Kubernetes manifests, etc.
+├── docs/              # Project documentation
+├── internal/          # Private application and library code
+├── pkg/               # Public library code, organized by layer/feature
+│   ├── adapter/       # Adapters to external systems (DBs, queues)
+│   ├── common/        # Shared utilities, types, constants, errors
+│   ├── domain/        # Core business logic, entities, service interfaces
+│   ├── observability/ # Tracing, metrics collection setup
+│   └── transport/     # gRPC and HTTP/REST transport layers
+├── scripts/           # Build, lint, test scripts
+├── tests/             # Integration and E2E tests
+├── go.mod
+└── README.md
+```
 
 ### 编码规范
 
